@@ -1,0 +1,674 @@
+select * from THREADS;
+select * from INSTAGRAM;
+
+--2. TRANSFORMACIÓN 
+---2.1 MEDIDAS DE CALIDAD
+----2.1.1 PRECISIÓN
+
+--THREADS
+
+SELECT 
+    -- Total de registros en la tabla
+    COUNT(*) AS TOTAL_RECORDS,
+
+    -- Validación de la columna NAME: No debe ser NULL
+    SUM(CASE WHEN NAME IS NOT NULL AND NAME <> '' THEN 1 ELSE 0 END) AS VALID_NAME,
+    ROUND(SUM(CASE WHEN NAME IS NOT NULL AND NAME <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_NAME,
+
+    -- Validación de la columna FOLLOWERS: Formato válido (número, "M", "K")
+    SUM(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) AS VALID_FOLLOWERS,
+    ROUND(SUM(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_FOLLOWERS,
+
+    -- Validación de la columna ER: Formato de porcentaje válido y dentro del rango [0% - 100%]
+    SUM(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE 0 END) AS VALID_ER,
+    ROUND(SUM(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_ER,
+
+    -- Validación de la columna COUNTRY: No debe ser NULL o vacío
+    SUM(CASE WHEN COUNTRY IS NOT NULL AND COUNTRY <> '' THEN 1 ELSE 0 END) AS VALID_COUNTRY,
+    ROUND(SUM(CASE WHEN COUNTRY IS NOT NULL AND COUNTRY <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_COUNTRY,
+
+    -- Validación de la columna TOPIC_OF_INFLUENCE: No debe ser NULL o vacío
+    SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> '' THEN 1 ELSE 0 END) AS VALID_TOPIC_OF_INFLUENCE,
+    ROUND(SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_TOPIC_OF_INFLUENCE,
+
+    -- Validación de la columna POTENTIAL_REACH: Formato válido (número, "M", "K")
+    SUM(CASE WHEN POTENTIAL_REACH REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) AS VALID_POTENTIAL_REACH,
+    ROUND(SUM(CASE WHEN POTENTIAL_REACH REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_POTENTIAL_REACH
+FROM THREADS;
+
+--INSTAGRAM
+
+SELECT 
+    -- Total de registros en la tabla
+    COUNT(*) AS TOTAL_RECORDS,
+
+    -- Validación de la columna NAME: No debe ser NULL o vacío
+    SUM(CASE WHEN NAME IS NOT NULL AND NAME <> '' THEN 1 ELSE 0 END) AS VALID_NAME,
+    ROUND(SUM(CASE WHEN NAME IS NOT NULL AND NAME <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_NAME,
+
+    -- Validación de la columna FOLLOWERS: Formato válido (número, "M", "K")
+    SUM(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) AS VALID_FOLLOWERS,
+    ROUND(SUM(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_FOLLOWERS,
+
+    -- Validación de la columna ER: Formato de porcentaje válido y dentro del rango [0% - 100%]
+    SUM(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE 0 END) AS VALID_ER,
+    ROUND(SUM(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_ER,
+
+    -- Validación de la columna COUNTRY: No debe ser NULL o vacío
+    SUM(CASE WHEN COUNTRY IS NOT NULL AND COUNTRY <> '' THEN 1 ELSE 0 END) AS VALID_COUNTRY,
+    ROUND(SUM(CASE WHEN COUNTRY IS NOT NULL AND COUNTRY <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_COUNTRY,
+
+    -- Validación de la columna TOPIC_OF_INFLUENCE: No debe ser NULL o vacío
+    SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> '' THEN 1 ELSE 0 END) AS VALID_TOPIC_OF_INFLUENCE,
+    ROUND(SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_TOPIC_OF_INFLUENCE,
+
+    -- Validación de la columna POTENTIAL_REACH: Formato válido (número, "M", "K")
+    SUM(CASE WHEN POTENTIAL_REACH REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) AS VALID_POTENTIAL_REACH,
+    ROUND(SUM(CASE WHEN POTENTIAL_REACH REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS PERCENT_VALID_POTENTIAL_REACH
+FROM INSTAGRAM;
+
+---2.1.2 ESTRUCTURA
+
+--THREADS
+
+SELECT 
+    -- Total de registros en la tabla
+    COUNT(*) AS TOTAL_RECORDS,
+
+    -- Verificación de columnas NOT NULL
+    SUM(CASE WHEN NAME IS NULL OR NAME = '' THEN 1 ELSE 0 END) AS NULL_NAMES,
+    SUM(CASE WHEN FOLLOWERS IS NULL OR FOLLOWERS = '' THEN 1 ELSE 0 END) AS NULL_FOLLOWERS,
+    SUM(CASE WHEN ER IS NULL OR ER = '' THEN 1 ELSE 0 END) AS NULL_ER,
+
+    -- Verificación del tipo de dato de FOLLOWERS
+    SUM(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) AS VALID_FOLLOWERS,
+    SUM(CASE WHEN NOT (FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$') THEN 1 ELSE 0 END) AS INVALID_FOLLOWERS,
+
+    -- Verificación del tipo de dato de ER (porcentaje válido)
+    SUM(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE 0 END) AS VALID_ER,
+    SUM(CASE WHEN NOT (ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100) THEN 1 ELSE 0 END) AS INVALID_ER,
+
+    -- Total de registros con estructura válida
+    SUM(CASE 
+        WHEN NAME IS NOT NULL AND NAME <> '' 
+             AND FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+             AND ER REGEXP '^[0-9]+(\.[0-9]+)?%$' 
+             AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100
+        THEN 1 ELSE 0 END) AS FULLY_VALID_RECORDS,
+    
+    -- Porcentaje de registros válidos
+    ROUND(
+        SUM(CASE 
+            WHEN NAME IS NOT NULL AND NAME <> '' 
+                 AND FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+                 AND ER REGEXP '^[0-9]+(\.[0-9]+)?%$' 
+                 AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100
+            THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_FULLY_VALID
+FROM THREADS;
+
+--INSTAGRAM 
+
+SELECT 
+    -- Total de registros en la tabla
+    COUNT(*) AS TOTAL_RECORDS,
+
+    -- Verificación de columnas NOT NULL
+    SUM(CASE WHEN NAME IS NULL OR NAME = '' THEN 1 ELSE 0 END) AS NULL_NAMES,
+    SUM(CASE WHEN FOLLOWERS IS NULL OR FOLLOWERS = '' THEN 1 ELSE 0 END) AS NULL_FOLLOWERS,
+    SUM(CASE WHEN ER IS NULL OR ER = '' THEN 1 ELSE 0 END) AS NULL_ER,
+    SUM(CASE WHEN COUNTRY IS NULL OR COUNTRY = '' THEN 1 ELSE 0 END) AS NULL_COUNTRY,
+    SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NULL OR TOPIC_OF_INFLUENCE = '' THEN 1 ELSE 0 END) AS NULL_TOPICS,
+    SUM(CASE WHEN POTENTIAL_REACH IS NULL OR POTENTIAL_REACH = '' THEN 1 ELSE 0 END) AS NULL_POTENTIAL_REACH,
+
+    -- Verificación del tipo de dato de FOLLOWERS
+    SUM(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) AS VALID_FOLLOWERS,
+    SUM(CASE WHEN NOT (FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$') THEN 1 ELSE 0 END) AS INVALID_FOLLOWERS,
+
+    -- Verificación del tipo de dato de ER (porcentaje válido)
+    SUM(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE 0 END) AS VALID_ER,
+    SUM(CASE WHEN NOT (ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100) THEN 1 ELSE 0 END) AS INVALID_ER,
+
+    -- Verificación del tipo de dato de POTENTIAL_REACH
+    SUM(CASE WHEN POTENTIAL_REACH REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE 0 END) AS VALID_POTENTIAL_REACH,
+    SUM(CASE WHEN NOT (POTENTIAL_REACH REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$') THEN 1 ELSE 0 END) AS INVALID_POTENTIAL_REACH,
+
+    -- Total de registros con estructura válida
+    SUM(CASE 
+        WHEN NAME IS NOT NULL AND NAME <> '' 
+             AND FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+             AND ER REGEXP '^[0-9]+(\.[0-9]+)?%$' 
+             AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100
+             AND COUNTRY IS NOT NULL AND COUNTRY <> ''
+             AND TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> ''
+             AND POTENTIAL_REACH REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$'
+        THEN 1 ELSE 0 END) AS FULLY_VALID_RECORDS,
+    
+    -- Porcentaje de registros válidos
+    ROUND(
+        SUM(CASE 
+            WHEN NAME IS NOT NULL AND NAME <> '' 
+                 AND FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+                 AND ER REGEXP '^[0-9]+(\.[0-9]+)?%$' 
+                 AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100
+                 AND COUNTRY IS NOT NULL AND COUNTRY <> ''
+                 AND TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> ''
+                 AND POTENTIAL_REACH REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$'
+            THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_FULLY_VALID
+FROM INSTAGRAM;
+
+---2.1.3 COMPLETITUD 
+
+--THREADS
+SELECT 
+    -- Total de registros en la tabla
+    COUNT(*) AS TOTAL_RECORDS,
+    
+    -- Completitud por cada columna
+    ROUND(SUM(CASE WHEN NAME IS NOT NULL AND NAME <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_NAME,
+    ROUND(SUM(CASE WHEN FOLLOWERS IS NOT NULL AND FOLLOWERS <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_FOLLOWERS,
+    ROUND(SUM(CASE WHEN ER IS NOT NULL AND ER <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_ER,
+    ROUND(SUM(CASE WHEN COUNTRY IS NOT NULL AND COUNTRY <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_COUNTRY,
+    ROUND(SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_TOPIC_OF_INFLUENCE,
+    ROUND(SUM(CASE WHEN POTENTIAL_REACH IS NOT NULL AND POTENTIAL_REACH <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_POTENTIAL_REACH,
+
+    -- Completitud general (promedio de las columnas)
+    ROUND(
+        (
+            SUM(CASE WHEN NAME IS NOT NULL AND NAME <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN FOLLOWERS IS NOT NULL AND FOLLOWERS <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN ER IS NOT NULL AND ER <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN COUNTRY IS NOT NULL AND COUNTRY <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN POTENTIAL_REACH IS NOT NULL AND POTENTIAL_REACH <> '' THEN 1 ELSE 0 END)
+        ) * 100.0 / (COUNT(*) * 6), 
+        2
+    ) AS OVERALL_COMPLETENESS
+FROM THREADS;
+
+--INSTAGRAM 
+SELECT 
+    -- Total de registros en la tabla
+    COUNT(*) AS TOTAL_RECORDS,
+    
+    -- Completitud por cada columna
+    ROUND(SUM(CASE WHEN NAME IS NOT NULL AND NAME <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_NAME,
+    ROUND(SUM(CASE WHEN FOLLOWERS IS NOT NULL AND FOLLOWERS <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_FOLLOWERS,
+    ROUND(SUM(CASE WHEN ER IS NOT NULL AND ER <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_ER,
+    ROUND(SUM(CASE WHEN COUNTRY IS NOT NULL AND COUNTRY <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_COUNTRY,
+    ROUND(SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_TOPIC_OF_INFLUENCE,
+    ROUND(SUM(CASE WHEN POTENTIAL_REACH IS NOT NULL AND POTENTIAL_REACH <> '' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS COMPLETENESS_POTENTIAL_REACH,
+
+    -- Completitud general (promedio de las columnas)
+    ROUND(
+        (
+            SUM(CASE WHEN NAME IS NOT NULL AND NAME <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN FOLLOWERS IS NOT NULL AND FOLLOWERS <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN ER IS NOT NULL AND ER <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN COUNTRY IS NOT NULL AND COUNTRY <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN TOPIC_OF_INFLUENCE IS NOT NULL AND TOPIC_OF_INFLUENCE <> '' THEN 1 ELSE 0 END) +
+            SUM(CASE WHEN POTENTIAL_REACH IS NOT NULL AND POTENTIAL_REACH <> '' THEN 1 ELSE 0 END)
+        ) * 100.0 / (COUNT(*) * 6), 
+        2
+    ) AS OVERALL_COMPLETENESS
+FROM INSTAGRAM;
+
+--2.1.4 CONSISTENCIA
+
+SELECT 
+    -- Total de registros que existen en ambas tablas
+    COUNT(t.NAME) AS TOTAL_RECORDS,
+
+    -- Consistencia en la columna NAME
+    COUNT(CASE WHEN t.NAME = i.NAME THEN 1 ELSE NULL END) AS CONSISTENT_NAMES,
+    ROUND(COUNT(CASE WHEN t.NAME = i.NAME THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME), 2) AS PERCENT_CONSISTENT_NAMES,
+
+    -- Consistencia en la columna FOLLOWERS (tolerancia del 5% en valores numéricos)
+    COUNT(CASE 
+        WHEN t.NAME = i.NAME 
+             AND ABS(CAST(REPLACE(t.FOLLOWERS, 'M', '') AS DECIMAL) - CAST(REPLACE(i.FOLLOWERS, 'M', '') AS DECIMAL)) <= 0.05 
+        THEN 1 ELSE NULL END) AS CONSISTENT_FOLLOWERS,
+    ROUND(
+        COUNT(CASE 
+            WHEN t.NAME = i.NAME 
+                 AND ABS(CAST(REPLACE(t.FOLLOWERS, 'M', '') AS DECIMAL) - CAST(REPLACE(i.FOLLOWERS, 'M', '') AS DECIMAL)) <= 0.05 
+            THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME), 
+        2
+    ) AS PERCENT_CONSISTENT_FOLLOWERS,
+
+    -- Consistencia en la columna ER (tolerancia del 1% en porcentaje)
+    COUNT(CASE 
+        WHEN t.NAME = i.NAME 
+             AND ABS(CAST(REPLACE(t.ER, '%', '') AS DECIMAL) - CAST(REPLACE(i.ER, '%', '') AS DECIMAL)) <= 1 
+        THEN 1 ELSE NULL END) AS CONSISTENT_ER,
+    ROUND(
+        COUNT(CASE 
+            WHEN t.NAME = i.NAME 
+                 AND ABS(CAST(REPLACE(t.ER, '%', '') AS DECIMAL) - CAST(REPLACE(i.ER, '%', '') AS DECIMAL)) <= 1 
+            THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME), 
+        2
+    ) AS PERCENT_CONSISTENT_ER,
+
+    -- Consistencia en la columna COUNTRY
+    COUNT(CASE WHEN t.NAME = i.NAME AND t.COUNTRY = i.COUNTRY THEN 1 ELSE NULL END) AS CONSISTENT_COUNTRY,
+    ROUND(
+        COUNT(CASE WHEN t.NAME = i.NAME AND t.COUNTRY = i.COUNTRY THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME),
+        2
+    ) AS PERCENT_CONSISTENT_COUNTRY,
+
+    -- Consistencia en la columna TOPIC_OF_INFLUENCE
+    COUNT(CASE WHEN t.NAME = i.NAME AND t.TOPIC_OF_INFLUENCE = i.TOPIC_OF_INFLUENCE THEN 1 ELSE NULL END) AS CONSISTENT_TOPICS,
+    ROUND(
+        COUNT(CASE WHEN t.NAME = i.NAME AND t.TOPIC_OF_INFLUENCE = i.TOPIC_OF_INFLUENCE THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME),
+        2
+    ) AS PERCENT_CONSISTENT_TOPICS,
+
+    -- Consistencia en la columna POTENTIAL_REACH (tolerancia del 5% en valores numéricos)
+    COUNT(CASE 
+        WHEN t.NAME = i.NAME 
+             AND ABS(CAST(REPLACE(t.POTENTIAL_REACH, 'M', '') AS DECIMAL) - CAST(REPLACE(i.POTENTIAL_REACH, 'M', '') AS DECIMAL)) <= 0.05 
+        THEN 1 ELSE NULL END) AS CONSISTENT_POTENTIAL_REACH,
+    ROUND(
+        COUNT(CASE 
+            WHEN t.NAME = i.NAME 
+                 AND ABS(CAST(REPLACE(t.POTENTIAL_REACH, 'M', '') AS DECIMAL) - CAST(REPLACE(i.POTENTIAL_REACH, 'M', '') AS DECIMAL)) <= 0.05 
+            THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME),
+        2
+    ) AS PERCENT_CONSISTENT_POTENTIAL_REACH,
+
+    -- Consistencia general (promedio de consistencias por columna)
+    ROUND((
+        ROUND(COUNT(CASE WHEN t.NAME = i.NAME THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME), 2) +
+        ROUND(
+            COUNT(CASE 
+                WHEN t.NAME = i.NAME 
+                     AND ABS(CAST(REPLACE(t.FOLLOWERS, 'M', '') AS DECIMAL) - CAST(REPLACE(i.FOLLOWERS, 'M', '') AS DECIMAL)) <= 0.05 
+                THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME), 2) +
+        ROUND(
+            COUNT(CASE 
+                WHEN t.NAME = i.NAME 
+                     AND ABS(CAST(REPLACE(t.ER, '%', '') AS DECIMAL) - CAST(REPLACE(i.ER, '%', '') AS DECIMAL)) <= 1 
+                THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME), 2) +
+        ROUND(
+            COUNT(CASE WHEN t.NAME = i.NAME AND t.COUNTRY = i.COUNTRY THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME),
+            2) +
+        ROUND(
+            COUNT(CASE WHEN t.NAME = i.NAME AND t.TOPIC_OF_INFLUENCE = i.TOPIC_OF_INFLUENCE THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME),
+            2) +
+        ROUND(
+            COUNT(CASE 
+                WHEN t.NAME = i.NAME 
+                     AND ABS(CAST(REPLACE(t.POTENTIAL_REACH, 'M', '') AS DECIMAL) - CAST(REPLACE(i.POTENTIAL_REACH, 'M', '') AS DECIMAL)) <= 0.05 
+                THEN 1 ELSE NULL END) * 100.0 / COUNT(t.NAME),
+            2)
+    ) / 6, 2) AS OVERALL_CONSISTENCY
+FROM 
+    THREADS t
+LEFT JOIN 
+    INSTAGRAM i
+ON 
+    t.NAME = i.NAME;
+
+--2.1.5 SEMÁNTICA 
+
+--THREADS 
+
+SELECT 
+    COUNT(*) AS TOTAL_RECORDS,
+
+    -- Semántica para la columna FOLLOWERS: Validar formato esperado (números, "M", "K")
+    COUNT(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE NULL END) AS SEMANTICALLY_CORRECT_FOLLOWERS,
+    ROUND(
+        COUNT(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_SEMANTICALLY_CORRECT_FOLLOWERS,
+
+    -- Semántica para la columna ER: Validar que sean porcentajes en rango válido (0% a 100%)
+    COUNT(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE NULL END) AS SEMANTICALLY_CORRECT_ER,
+    ROUND(
+        COUNT(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_SEMANTICALLY_CORRECT_ER,
+
+    -- Semántica para la columna COUNTRY: Validar si pertenece a una lista definida de países válidos
+    COUNT(CASE WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 ELSE NULL END) AS SEMANTICALLY_CORRECT_COUNTRY,
+    ROUND(
+        COUNT(CASE WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_SEMANTICALLY_CORRECT_COUNTRY,
+
+    -- Promedio general de semántica
+    ROUND((
+        ROUND(
+            COUNT(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        ) +
+        ROUND(
+            COUNT(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        ) +
+        ROUND(
+            COUNT(CASE WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        )
+    ) / 3, 2) AS OVERALL_SEMANTICS
+FROM THREADS;
+
+--INSTAGRAM
+
+SELECT 
+    COUNT(*) AS TOTAL_RECORDS,
+
+    -- Semántica para la columna FOLLOWERS: Validar formato esperado (números, "M", "K")
+    COUNT(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE NULL END) AS SEMANTICALLY_CORRECT_FOLLOWERS,
+    ROUND(
+        COUNT(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_SEMANTICALLY_CORRECT_FOLLOWERS,
+
+    -- Semántica para la columna ER: Validar que sean porcentajes en rango válido (0% a 100%)
+    COUNT(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE NULL END) AS SEMANTICALLY_CORRECT_ER,
+    ROUND(
+        COUNT(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_SEMANTICALLY_CORRECT_ER,
+
+    -- Semántica para la columna COUNTRY: Validar si pertenece a una lista definida de países válidos
+    COUNT(CASE WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 ELSE NULL END) AS SEMANTICALLY_CORRECT_COUNTRY,
+    ROUND(
+        COUNT(CASE WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_SEMANTICALLY_CORRECT_COUNTRY,
+
+    -- Promedio general de semántica
+    ROUND((
+        ROUND(
+            COUNT(CASE WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        ) +
+        ROUND(
+            COUNT(CASE WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        ) +
+        ROUND(
+            COUNT(CASE WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        )
+    ) / 3, 2) AS OVERALL_SEMANTICS
+FROM INSTAGRAM;
+
+--2.1.6 RAZONABILIDAD 
+
+--THREADS 
+
+SELECT 
+    COUNT(*) AS TOTAL_RECORDS,
+
+    -- Razonabilidad en la columna FOLLOWERS: Valores no negativos y razonables (< 1B)
+    COUNT(CASE 
+        WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+             AND CAST(REPLACE(REPLACE(FOLLOWERS, 'M', ''), 'K', '') AS DECIMAL) BETWEEN 0 AND 1000 THEN 1 
+        ELSE NULL END) AS REASONABLE_FOLLOWERS,
+    ROUND(
+        COUNT(CASE 
+            WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+                 AND CAST(REPLACE(REPLACE(FOLLOWERS, 'M', ''), 'K', '') AS DECIMAL) BETWEEN 0 AND 1000 THEN 1 
+            ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_REASONABLE_FOLLOWERS,
+
+    -- Razonabilidad en la columna ER: Debe estar entre 0% y 100%
+    COUNT(CASE 
+        WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 
+        ELSE NULL END) AS REASONABLE_ER,
+    ROUND(
+        COUNT(CASE 
+            WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 
+            ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_REASONABLE_ER,
+
+    -- Razonabilidad en la columna COUNTRY: Debe pertenecer a una lista válida
+    COUNT(CASE 
+        WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 
+        ELSE NULL END) AS REASONABLE_COUNTRY,
+    ROUND(
+        COUNT(CASE 
+            WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 
+            ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_REASONABLE_COUNTRY,
+
+    -- Promedio general de razonabilidad
+    ROUND((
+        ROUND(
+            COUNT(CASE 
+                WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+                     AND CAST(REPLACE(REPLACE(FOLLOWERS, 'M', ''), 'K', '') AS DECIMAL) BETWEEN 0 AND 1000 THEN 1 
+                ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        ) +
+        ROUND(
+            COUNT(CASE 
+                WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 
+                ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        ) +
+        ROUND(
+            COUNT(CASE 
+                WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 
+                ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        )
+    ) / 3, 2) AS OVERALL_REASONABILITY
+FROM THREADS;
+
+--INSTAGRAM
+
+SELECT 
+    COUNT(*) AS TOTAL_RECORDS,
+
+    -- Razonabilidad en la columna FOLLOWERS: Valores no negativos y razonables (< 1B)
+    COUNT(CASE 
+        WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+             AND CAST(REPLACE(REPLACE(FOLLOWERS, 'M', ''), 'K', '') AS DECIMAL) BETWEEN 0 AND 1000 THEN 1 
+        ELSE NULL END) AS REASONABLE_FOLLOWERS,
+    ROUND(
+        COUNT(CASE 
+            WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+                 AND CAST(REPLACE(REPLACE(FOLLOWERS, 'M', ''), 'K', '') AS DECIMAL) BETWEEN 0 AND 1000 THEN 1 
+            ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_REASONABLE_FOLLOWERS,
+
+    -- Razonabilidad en la columna ER: Debe estar entre 0% y 100%
+    COUNT(CASE 
+        WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 
+        ELSE NULL END) AS REASONABLE_ER,
+    ROUND(
+        COUNT(CASE 
+            WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 
+            ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_REASONABLE_ER,
+
+    -- Razonabilidad en la columna COUNTRY: Debe pertenecer a una lista válida
+    COUNT(CASE 
+        WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 
+        ELSE NULL END) AS REASONABLE_COUNTRY,
+    ROUND(
+        COUNT(CASE 
+            WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 
+            ELSE NULL END) * 100.0 / COUNT(*), 
+        2
+    ) AS PERCENT_REASONABLE_COUNTRY,
+
+    -- Promedio general de razonabilidad
+    ROUND((
+        ROUND(
+            COUNT(CASE 
+                WHEN FOLLOWERS REGEXP '^[0-9]+(\.[0-9]+)?[MK]?$' 
+                     AND CAST(REPLACE(REPLACE(FOLLOWERS, 'M', ''), 'K', '') AS DECIMAL) BETWEEN 0 AND 1000 THEN 1 
+                ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        ) +
+        ROUND(
+            COUNT(CASE 
+                WHEN ER REGEXP '^[0-9]+(\.[0-9]+)?%$' AND CAST(REPLACE(ER, '%', '') AS DECIMAL) BETWEEN 0 AND 100 THEN 1 
+                ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        ) +
+        ROUND(
+            COUNT(CASE 
+                WHEN COUNTRY IN ('United States', 'Brazil', 'Argentina', 'Portugal', 'India') THEN 1 
+                ELSE NULL END) * 100.0 / COUNT(*), 
+            2
+        )
+    ) / 3, 2) AS OVERALL_REASONABILITY
+FROM INSTAGRAM;
+
+--2.2 ESTANDARIZACION DE LOS DATOS 
+
+--THREADS
+UPDATE THREADS
+SET FOLLOWERS = CASE 
+    WHEN FOLLOWERS LIKE '%M' THEN CAST(REPLACE(FOLLOWERS, 'M', '') AS DECIMAL) * 1000000
+    WHEN FOLLOWERS LIKE '%K' THEN CAST(REPLACE(FOLLOWERS, 'K', '') AS DECIMAL) * 1000
+    ELSE CAST(FOLLOWERS AS DECIMAL)
+END;
+
+UPDATE THREADS
+SET FOLLOWERS = CAST(FOLLOWERS AS UNSIGNED); -- Quitar decimales (mantener solo enteros)
+
+UPDATE THREADS
+SET POTENTIAL_REACH = CASE 
+    WHEN POTENTIAL_REACH LIKE '%M' THEN CAST(REPLACE(POTENTIAL_REACH, 'M', '') AS DECIMAL) * 1000000
+    WHEN POTENTIAL_REACH LIKE '%K' THEN CAST(REPLACE(POTENTIAL_REACH, 'K', '') AS DECIMAL) * 1000
+    ELSE CAST(POTENTIAL_REACH AS DECIMAL)
+END;
+
+UPDATE THREADS
+SET POTENTIAL_REACH = CAST(POTENTIAL_REACH AS UNSIGNED); -- Quitar decimales
+
+--INSTAGRAM 
+
+UPDATE INSTAGRAM
+SET FOLLOWERS = CASE 
+    WHEN FOLLOWERS LIKE '%M' THEN CAST(REPLACE(FOLLOWERS, 'M', '') AS DECIMAL) * 1000000
+    WHEN FOLLOWERS LIKE '%K' THEN CAST(REPLACE(FOLLOWERS, 'K', '') AS DECIMAL) * 1000
+    ELSE CAST(FOLLOWERS AS DECIMAL)
+END;
+
+UPDATE INSTAGRAM
+SET FOLLOWERS = CAST(FOLLOWERS AS UNSIGNED); -- Quitar decimales
+
+UPDATE INSTAGRAM
+SET POTENTIAL_REACH = CASE 
+    WHEN POTENTIAL_REACH LIKE '%M' THEN CAST(REPLACE(POTENTIAL_REACH, 'M', '') AS DECIMAL) * 1000000
+    WHEN POTENTIAL_REACH LIKE '%K' THEN CAST(REPLACE(POTENTIAL_REACH, 'K', '') AS DECIMAL) * 1000
+    ELSE CAST(POTENTIAL_REACH AS DECIMAL)
+END;
+
+UPDATE INSTAGRAM
+SET POTENTIAL_REACH = CAST(POTENTIAL_REACH AS UNSIGNED); -- Quitar decimales
+
+--2.3 NORMALIZAR PORCENTAJES 
+
+--THREADS
+UPDATE THREADS
+SET ER = CAST(REPLACE(ER, '%', '') AS DECIMAL) / 100;
+
+--INSTAGRAM
+
+UPDATE INSTAGRAM
+SET ER = CAST(REPLACE(ER, '%', '') AS DECIMAL) / 100;
+
+
+--2.4 MANEJO DE VALORES NULOS 
+
+--THREADS 
+UPDATE THREADS
+SET COUNTRY = 'Unknown'
+WHERE COUNTRY IS NULL OR COUNTRY = '';
+
+UPDATE THREADS
+SET TOPIC_OF_INFLUENCE = 'Unknown'
+WHERE TOPIC_OF_INFLUENCE IS NULL OR TOPIC_OF_INFLUENCE = '';
+
+--INSTAGRAM
+
+UPDATE INSTAGRAM
+SET COUNTRY = 'Unknown'
+WHERE COUNTRY IS NULL OR COUNTRY = '';
+
+UPDATE INSTAGRAM
+SET TOPIC_OF_INFLUENCE = 'Unknown'
+WHERE TOPIC_OF_INFLUENCE IS NULL OR TOPIC_OF_INFLUENCE = '';
+
+--2.5 ENREQUECIMIENTO DE LOS DATOS 
+--- cantidad de seguidores que interactuan diariamente con la cuenta 
+
+--THREADS 
+
+ALTER TABLE THREADS ADD COLUMN ENGAGEMENT DECIMAL;
+UPDATE THREADS
+SET ENGAGEMENT = FOLLOWERS * ER;
+
+--INSTAGRAM
+
+ALTER TABLE INSTAGRAM ADD COLUMN ENGAGEMENT DECIMAL;
+UPDATE INSTAGRAM
+SET ENGAGEMENT = FOLLOWERS * ER;
+
+-- 2.6 CLASIFICAR LAS CUENTAS POR NUMEROS DE SEGUIDORES
+
+--THREADS 
+
+ALTER TABLE THREADS ADD COLUMN SIZE_CATEGORY VARCHAR(50);
+UPDATE THREADS
+SET SIZE_CATEGORY = CASE 
+    WHEN FOLLOWERS < 10000 THEN 'Micro'
+    WHEN FOLLOWERS BETWEEN 10000 AND 100000 THEN 'Small'
+    WHEN FOLLOWERS BETWEEN 100000 AND 1000000 THEN 'Medium'
+    ELSE 'Large'
+END;
+
+
+--INSTAGRAM
+
+ALTER TABLE INSTAGRAM ADD COLUMN SIZE_CATEGORY VARCHAR(50);
+UPDATE INSTAGRAM
+SET SIZE_CATEGORY = CASE 
+    WHEN FOLLOWERS < 10000 THEN 'Micro'
+    WHEN FOLLOWERS BETWEEN 10000 AND 100000 THEN 'Small'
+    WHEN FOLLOWERS BETWEEN 100000 AND 1000000 THEN 'Medium'
+    ELSE 'Large'
+END;
+
+
+-- 2.7 INDENTIFICAR PARES CONSISTENTES
+
+ALTER TABLE THREADS ADD COLUMN MATCH_WITH_INSTAGRAM BOOLEAN;
+UPDATE THREADS
+SET MATCH_WITH_INSTAGRAM = CASE 
+    WHEN EXISTS (
+        SELECT 1 
+        FROM INSTAGRAM i 
+        WHERE THREADS.NAME = i.NAME 
+          AND ABS(THREADS.FOLLOWERS - i.FOLLOWERS) <= 10000
+          AND ABS(THREADS.ER - i.ER) <= 0.01
+    ) THEN TRUE
+    ELSE FALSE
+END;
+
+
+
+
+
+
+
+
+

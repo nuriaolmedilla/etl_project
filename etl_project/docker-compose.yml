@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  etl:
+    build: .
+    container_name: etl_container
+    volumes:
+      - .:/app
+    networks:
+      - etl_network
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: etl_db
+      DB_USER: etl_user
+      DB_PASSWORD: password
+  db:
+    image: postgres:13
+    container_name: db_container
+    environment:
+      POSTGRES_USER: etl_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: etl_db
+    ports:
+      - "5432:5432"
+    networks:
+      - etl_network
+
+networks:
+  etl_network:
+    driver: bridge

@@ -11,7 +11,7 @@ Este proyecto implementa un proceso ETL completo (Extracción, Transformación y
 ### Configuración
 1. Clonar el repositorio:
    ```
-   git clone https://github.com/tu_usuario/etl_project.git
+   git clone https://github.com/nuriaolmedilla/etl_project.git
    cd etl_project
    ```
 2. Construir el contenedor Docker:
@@ -31,3 +31,7 @@ El repositorio contiene:
 
 ## Licencia
 MIT License
+
+## Data Lakehouse: Es la mejor opción, ya que los datos tienen una mezcla de estructura:
+•	Datos estructurados (dim_account.csv y fact_social_metrics.csv).
+•	Datos parcialmente estructurados con formatos inconsistentes (THREADS.csv, INSTAGRAM.csv).
